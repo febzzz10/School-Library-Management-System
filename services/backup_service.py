@@ -94,8 +94,11 @@ def restore_database(backup_path: str) -> str:
     # 3) Make sure the restored database has the required schema/objects.
     try:
         database.initialize_database()
-    except Exception:
-        pass
+    except database.DatabaseError as exc:
+        raise ServiceError(
+            "The backup was restored but the schema could not be verified. "
+            "Try restoring again or contact support."
+        ) from exc
 
     utils.log_activity("DB_RESTORE", f"Database restored from: {backup_path}")
     return safety_path

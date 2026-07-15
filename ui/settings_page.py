@@ -194,6 +194,8 @@ class SettingsPage(QWidget):
                 self,
                 f"Full Excel backup created successfully.\nFile saved at:\n{path}",
             )
+        except ServiceError as exc:
+            theme.show_error(self, str(exc))
         except Exception:
             theme.show_error(self, "Backup failed. Please check folder permission.")
 

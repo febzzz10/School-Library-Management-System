@@ -319,5 +319,7 @@ class BooksPage(QWidget):
             theme.show_success(
                 self, f"Report exported successfully.\nFile saved at:\n{path}"
             )
+        except ServiceError as exc:
+            theme.show_error(self, str(exc))
         except Exception:
             theme.show_error(self, "Unable to export the file. Please try again.")

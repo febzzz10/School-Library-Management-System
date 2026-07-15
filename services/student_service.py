@@ -32,12 +32,14 @@ def get_students(search: str = "", status: str = None, class_name: str = None,
 
     where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     query = f"SELECT * FROM students {where} ORDER BY name ASC"
-    return [dict(r) for r in database.fetch_all(query, tuple(params))]
+    return [_upper_division(dict(r)) for r in database.fetch_all(query, tuple(params))]
 
 
 def get_student(student_id: int):
-    return utils.row_to_dict(
-        database.fetch_one("SELECT * FROM students WHERE id = ?", (student_id,))
+    return _upper_division(
+        utils.row_to_dict(
+            database.fetch_one("SELECT * FROM students WHERE id = ?", (student_id,))
+        )
     )
 
 
@@ -49,7 +51,7 @@ def get_active_students(search: str = ""):
         "(student_code LIKE ? OR name LIKE ? OR class_name LIKE ? "
         "OR division LIKE ?) ORDER BY name ASC"
     )
-    return [dict(r) for r in database.fetch_all(query, (like, like, like, like))]
+    return [_upper_division(dict(r)) for r in database.fetch_all(query, (like, like, like, like))]
 
 
 def add_student(data: dict) -> int:
@@ -64,6 +66,8 @@ def add_student(data: dict) -> int:
     if _code_exists(code):
         raise ServiceError("A student with this Student ID already exists.")
 
+    division = (data.get("division") or "").strip().upper() or None
+
     now = utils.now_timestamp()
     try:
         student_id = database.execute(
@@ -74,7 +78,7 @@ def add_student(data: dict) -> int:
                 code,
                 name,
                 (data.get("class_name") or "").strip() or None,
-                (data.get("division") or "").strip() or None,
+                division,
                 data.get("status") or config.STATUS_ACTIVE,
                 now,
                 now,
@@ -102,6 +106,8 @@ def update_student(student_id: int, data: dict) -> None:
     if _code_exists(code, exclude_id=student_id):
         raise ServiceError("Another student with this Student ID already exists.")
 
+    division = (data.get("division") or "").strip().upper() or None
+
     try:
         database.execute(
             "UPDATE students SET student_code = ?, name = ?, class_name = ?, "
@@ -111,7 +117,7 @@ def update_student(student_id: int, data: dict) -> None:
                 code,
                 name,
                 (data.get("class_name") or "").strip() or None,
-                (data.get("division") or "").strip() or None,
+                division,
                 data.get("status") or student["status"],
                 utils.now_timestamp(),
                 student_id,
@@ -197,3 +203,10 @@ def _friendly_db_error(exc: Exception) -> str:
     if "unique" in text and "student_code" in text:
         return "A student with this Student ID already exists."
     return "Unable to save the student. Please try again."
+
+
+def _upper_division(student):
+    """Uppercase division in a student dict (or None)."""
+    if student is not None and student.get("division"):
+        student["division"] = student["division"].strip().upper()
+    return student

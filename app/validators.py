@@ -8,8 +8,6 @@ user. Messages are user-friendly (no technical/database terms).
 from app import utils
 
 
-
-
 class ValidationResult:
     """Outcome of a validation check."""
 

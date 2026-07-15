@@ -348,9 +348,10 @@ def export_full_backup(directory: str = None) -> str:
 # ---------------------------------------------------------------------------
 def _student_backup_row(row):
     d = dict(row)
+    division = (d.get("division") or "").strip().upper() or None
     return {
         "student_code": d.get("student_code"), "name": d.get("name"),
-        "class_name": d.get("class_name"), "division": d.get("division"),
+        "class_name": d.get("class_name"), "division": division,
         "status": d.get("status"),
         "created_at": d.get("created_at"), "updated_at": d.get("updated_at"),
     }

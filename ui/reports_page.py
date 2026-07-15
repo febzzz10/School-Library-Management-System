@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 )
 
 from app import utils
-from services import excel_service, report_service, student_service
+from services import ServiceError, excel_service, report_service, student_service
 from ui import theme
 
 REPORT_TYPES = [
@@ -198,7 +198,7 @@ class ReportsPage(QWidget):
                     columns, rows = func(search, date_from, date_to)
             else:
                 columns, rows = func(search)
-        except Exception:
+        except ServiceError:
             columns, rows = [], []
 
         self._columns, self._rows = columns, rows
@@ -284,5 +284,7 @@ class ReportsPage(QWidget):
             theme.show_success(
                 self, f"Report exported successfully.\nFile saved at:\n{path}"
             )
+        except ServiceError as exc:
+            theme.show_error(self, str(exc))
         except Exception:
             theme.show_error(self, "Unable to export the report. Please try again.")

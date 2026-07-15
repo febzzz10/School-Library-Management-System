@@ -256,8 +256,8 @@ class MainWindow(QMainWindow):
         self._refresh_top_bar()
 
     def reload_after_restore(self):
-        if hasattr(self.reports, "_load_students"):
-            self.reports._load_students()
+        if hasattr(self.reports, "_search_students"):
+            self.reports._search_students()
         self.refresh_all()
         self._select_page(0)
 

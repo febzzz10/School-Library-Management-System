@@ -141,8 +141,12 @@ def report_students(search: str = ""):
             "ORDER BY name ASC",
             (like, like, like),
         )
+        rows = [dict(r) for r in rows]
+        for row in rows:
+            if row.get("division"):
+                row["division"] = row["division"].strip().upper()
         columns = ["Student ID", "Name", "Class", "Division", "Status"]
-        return columns, [dict(r) for r in rows]
+        return columns, rows
     except database.DatabaseError:
         logger.exception("report_students failed")
         raise ServiceError("Unable to load student report.")

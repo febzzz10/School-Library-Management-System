@@ -52,6 +52,7 @@ class StudentFormDialog(QDialog):
         self.class_input.setPlaceholderText("Enter class")
         self.division_input = QLineEdit()
         self.division_input.setPlaceholderText("Enter division")
+        self.division_input.textChanged.connect(self._uppercase_division)
         self.status_input = QComboBox()
         self.status_input.addItems(["ACTIVE", "INACTIVE"])
 
@@ -76,6 +77,16 @@ class StudentFormDialog(QDialog):
         buttons.addWidget(cancel)
         buttons.addWidget(save)
         layout.addLayout(buttons)
+
+    def _uppercase_division(self):
+        text = self.division_input.text()
+        upper = text.upper()
+        if upper != text:
+            pos = self.division_input.cursorPosition()
+            self.division_input.blockSignals(True)
+            self.division_input.setText(upper)
+            self.division_input.setCursorPosition(pos)
+            self.division_input.blockSignals(False)
 
     def _req(self, text) -> QLabel:
         label = QLabel(f"{text} *")
@@ -350,5 +361,7 @@ class StudentsPage(QWidget):
             theme.show_success(
                 self, f"Report exported successfully.\nFile saved at:\n{path}"
             )
+        except ServiceError as exc:
+            theme.show_error(self, str(exc))
         except Exception:
             theme.show_error(self, "Unable to export the file. Please try again.")

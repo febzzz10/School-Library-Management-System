@@ -86,3 +86,62 @@ class TestStudentService:
         history = student_service.get_student_history(sample_issue["student_id"])
         assert len(history) >= 1
         assert history[0]["book_title"] == sample_issue["book_title"]
+
+    # -- Division uppercase tests -------------------------------------------
+
+    def test_add_student_uppercases_division_a(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_A", "name": "Test A",
+            "division": "a",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] == "A"
+
+    def test_add_student_uppercases_division_b(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_B", "name": "Test B",
+            "division": "b",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] == "B"
+
+    def test_add_student_uppercases_division_multi_word(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_MW", "name": "Test MW",
+            "division": "science a",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] == "SCIENCE A"
+
+    def test_add_student_uppercases_division_mixed_case(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_MC", "name": "Test MC",
+            "division": "mixedCase",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] == "MIXEDCASE"
+
+    def test_add_student_strips_and_uppercases_division(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_WS", "name": "Test WS",
+            "division": "  c  ",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] == "C"
+
+    def test_add_student_empty_division_is_none(self, fresh_db):
+        sid = student_service.add_student({
+            "student_code": "DIV_EM", "name": "Test EM",
+            "division": "",
+        })
+        student = student_service.get_student(sid)
+        assert student["division"] is None
+
+    def test_update_student_uppercases_division(self, fresh_db, sample_student):
+        student_service.update_student(sample_student["id"], {
+            "student_code": sample_student["student_code"],
+            "name": sample_student["name"],
+            "division": "lowercase",
+        })
+        updated = student_service.get_student(sample_student["id"])
+        assert updated["division"] == "LOWERCASE"
