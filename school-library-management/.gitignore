@@ -1,0 +1,47 @@
+# Build outputs
+dist/
+build/
+build-onefile/
+dist-onefile/
+
+# Auto-generated PyInstaller specs
+School Library Management System.spec
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backups
+backups/
+
+# Database
+*.db
+
+# Dependencies
+node_modules/
+
+# Exports
+exports/
+
+# Logs
+logs/
+
+# Docs — archives are tracked for historical value
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Archives
+*.zip
+*.7z
+*.rar
+
+
+
+# Installer builds
+installer/

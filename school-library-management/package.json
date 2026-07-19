@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@dietrichgebert/ponytail": "^4.8.4",
+    "superpowers": "file:../../../../.config/opencode/node_modules/superpowers"
+  }
+}
